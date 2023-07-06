@@ -6,12 +6,8 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors'
 import jamaahC from './routes/jamaah.js'
 import db from './config/db.js';
-import Perkab from './model/perlengkapan.js';
 import perkab from './routes/perkab.js'; 
 import file from './routes/file.js';
-import fileUpload from 'express-fileupload';
-import multer from 'multer';
-import { uuid } from 'uuidv4';
 
 const app = express();
 
@@ -28,6 +24,11 @@ app.use(cors({
     credentials: true
 }))
 
+app.get('/',(req,res)=>{
+    res.status(200).json({
+        message : "welcome to hisar api"
+    })
+})
 app.use(admin)
 app.use(jamaahC)
 app.use(perkab)

@@ -9,7 +9,7 @@ const db = new Sequelize(process.env.DBNAME,process.env.DBUSER,process.env.DBPAS
     pool: {
         max: 20,
         min: 0,   
-        idle: 20000,
+        idle: 30000,
     }
     
 })
