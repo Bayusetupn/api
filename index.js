@@ -19,10 +19,10 @@ app.use('/image',express.static('image'))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
-app.use(cors(/*{
+app.use(cors({
     origin: "https://hisar-a0cxe64z4-bayu3541732.vercel.app/",
     credentials: true
-}*/))
+}))
 
 app.get('/',(req,res)=>{
     res.status(200).json({
