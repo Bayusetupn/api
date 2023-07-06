@@ -15,14 +15,9 @@ import { uuid } from 'uuidv4';
 
 const app = express();
 
-//(async()=>{
-    //await db.sync()
-//})()
-
-
-
-
-
+(async()=>{
+    await db.sync()
+})()
 
 app.use('/image',express.static('image'))
 app.use(express.json())
