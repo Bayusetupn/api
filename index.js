@@ -23,7 +23,7 @@ app.use(cookieParser())
 app.use((req, res, next) => {
     res.setHeader(
       "Access-Control-Allow-Origin",
-      "https://hisar-lake.vercel.app"
+      "https://hisar-a0cxe64z4-bayu3541732.vercel.app/"
     );
     res.setHeader(
       "Access-Control-Allow-Methods",
@@ -42,7 +42,7 @@ app.use((req, res, next) => {
   });
 
 app.use(cors({
-    origin: "https://hisar-lake.vercel.app",
+    origin: "https://hisar-a0cxe64z4-bayu3541732.vercel.app/",
     credentials: true
 }))
 
