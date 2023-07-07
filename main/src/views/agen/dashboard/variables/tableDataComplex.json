@@ -1,0 +1,26 @@
+[
+  {
+    "nama": "Marketplace",
+    "alamat": "Approved",
+    "total_jamaah": "24.Jan.2021",
+    "progress": 30
+  },
+  {
+    "nama": "Marketplace",
+    "alamat": "Disable",
+    "total_jamaah": "30.Dec.2021",
+    "progress": 30
+  },
+  {
+    "nama": "Marketplace",
+    "alamat": "Error",
+    "total_jamaah": "20.May.2021",
+    "progress": 30
+  },
+  {
+    "nama": "Marketplace",
+    "alamat": "Approved",
+    "total_jamaah": "12.Jul.2021",
+    "progress": 30
+  }
+]
