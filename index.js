@@ -20,7 +20,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors({
-    origin: "https://hisar-a0cxe64z4-bayu3541732.vercel.app",
+    origin: "https://hisar-lake.vercel.app/",
     credentials: true
 }))
 
