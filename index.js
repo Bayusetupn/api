@@ -24,20 +24,6 @@ app.use(cors({
     credentials: true
 }))
 
-app.options("*", (req, res) => {
-    console.log("preflight");
-    if (
-        req.headers.origin === "https://hisar-a0cxe64z4-bayu3541732.vercel.app" &&
-        allowMethods.includes(req.headers["access-control-request-method"]) &&
-        allowHeaders.includes(req.headers["access-control-request-headers"])
-    ) {
-        console.log("pass");
-        return res.status(204).send();
-    } else {
-        console.log("fail");
-    }
-}
-)
 
 app.get('/', (req, res) => {
     res.status(200).json({
