@@ -6,27 +6,42 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors'
 import jamaahC from './routes/jamaah.js'
 import db from './config/db.js';
-import perkab from './routes/perkab.js'; 
+import perkab from './routes/perkab.js';
 import file from './routes/file.js';
 
 const app = express();
 
-(async()=>{
+(async () => {
     await db.sync()
 })()
 
-app.use('/image',express.static('image'))
+app.use('/image', express.static('image'))
 app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors({
-    origin: "https://hisar-a0cxe64z4-bayu3541732.vercel.app/",
+    origin: "https://hisar-a0cxe64z4-bayu3541732.vercel.app",
     credentials: true
 }))
 
-app.get('/',(req,res)=>{
+app.options("*", (req, res) => {
+    console.log("preflight");
+    if (
+        req.headers.origin === "https://hisar-a0cxe64z4-bayu3541732.vercel.app" &&
+        allowMethods.includes(req.headers["access-control-request-method"]) &&
+        allowHeaders.includes(req.headers["access-control-request-headers"])
+    ) {
+        console.log("pass");
+        return res.status(204).send();
+    } else {
+        console.log("fail");
+    }
+}
+)
+
+app.get('/', (req, res) => {
     res.status(200).json({
-        message : "welcome to hisar api"
+        message: "welcome to hisar api"
     })
 })
 app.use(admin)
@@ -35,6 +50,6 @@ app.use(perkab)
 app.use(file)
 
 
-app.listen(process.env.PORT,()=>{
+app.listen(process.env.PORT, () => {
     console.log('Server Running...')
 })
