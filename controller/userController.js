@@ -1,5 +1,5 @@
 import User from '../model/user.js';
-//import argon2 from 'argon2';
+import argon2 from 'argon2';
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import fs from 'fs'
@@ -82,7 +82,7 @@ export const createAgen = async (req, res) => {
                 no_telepon: req.body.no_telepon,
                 role: role,
                 username: req.body.username,
-                password: req.body.password
+                password: await argon2.hash(req.body.password)
             })
             return res.status(201).json({
                 message: "Succes Menambah Agen"
@@ -137,7 +137,7 @@ export const createUstad = async (req, res) => {
                 no_telepon: req.body.no_telepon,
                 role: roles,
                 username: req.body.username,
-                password: req.body.password
+                password: await argon2.hash(req.body.password)
             })
             return res.status(201).json({
                 message: "Succes Menambah Ustad"
@@ -198,7 +198,7 @@ export const editUstad = async (req, res) => {
                 await User.update({
                     nama: req.body.nama,
                     username: req.body.username,
-                    password: req.body.password
+                    password: await argon2.hash(req.body.password)
                 }, {
                     where: {
                         id: req.body.id,
@@ -217,7 +217,7 @@ export const editUstad = async (req, res) => {
             } else if (req.body.username == user.username) {
                 await User.update({
                     nama: req.body.nama,
-                    password: req.body.password
+                    password: await argon2.hash(req.body.password)
                 }, {
                     where: {
                         id: req.body.id,
@@ -342,7 +342,7 @@ export const editAgen = async (req, res) => {
                 await User.update({
                     nama: req.body.nama,
                     username: req.body.username,
-                    password: req.body.password
+                    password: await argon2.hash(req.body.password)
                 }, {
                     where: {
                         id: req.body.id,
@@ -361,7 +361,7 @@ export const editAgen = async (req, res) => {
             } else if (req.body.username == user.username) {
                 await User.update({
                     nama: req.body.nama,
-                    password: req.body.password
+                    password: await argon2.hash(req.body.password)
                 }, {
                     where: {
                         id: req.body.id,
@@ -427,7 +427,7 @@ export const editAdmin = async (req, res) => {
                 await User.update({
                     nama: req.body.nama,
                     username: req.body.username,
-                    password: req.body.password
+                    password: await argon2.hash(req.body.password)
                 }, {
                     where: {
                         id: decode.id,
@@ -446,7 +446,7 @@ export const editAdmin = async (req, res) => {
             } else if (decode.id == user.username) {
                 await User.update({
                     nama: req.body.nama,
-                    password: req.body.password
+                    password: await argon2.hash(req.body.password)
                 }, {
                     where: {
                         id: decode.id,
@@ -566,9 +566,9 @@ export const Login = async (req, res) => {
             }
         });
         if (username) {
-            var valid = true //"await argon2.verify(username.password, req.body.password)"
+            var valid = await argon2.verify(username.password, req.body.password)
             if (valid) {
-                const token = jwt.sign({ id: username.id }, process.env.SECRETKEY, { expiresIn: '1d' })
+                const token = jwt.sign({ id: username.id }, process.env.SECRETKEY, { expiresIn: 360000000 })
                 res.status(200).json({
                     token: token,
                     role: username.role
@@ -585,7 +585,7 @@ export const Login = async (req, res) => {
         }
     } catch (err) {
         res.status(404).json({
-            "error": err
+            message: "Username atau Password Anda Salah!"
         })
     }
 }

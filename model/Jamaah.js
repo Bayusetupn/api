@@ -32,6 +32,13 @@ const Jamaah = db.define('jamaah',{
             notEmpty: true
         }
     },
+    daftarkan:{
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate:{
+            notEmpty: true
+        }
+    },
     jenis_kelamin:{
         type: DataTypes.STRING,
         allowNull: false,
