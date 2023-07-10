@@ -8,6 +8,7 @@ import jamaahC from './routes/jamaah.js'
 import perkab from './routes/perkab.js';
 import file from './routes/file.js';
 import { isAll } from './middleware/auth.js';
+import path from 'path'
 // import sessions from 'express-session';
 
 const app = express();
@@ -22,7 +23,7 @@ const app = express();
 //     resave: true,
 // }))
 
-app.use('/image', express.static('image'))
+app.use('/image', express.static(path.join(__dirname,'image')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
