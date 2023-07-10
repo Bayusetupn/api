@@ -8,9 +8,9 @@ import jamaahC from './routes/jamaah.js'
 import perkab from './routes/perkab.js';
 import file from './routes/file.js';
 import { isAll } from './middleware/auth.js';
-import path from 'path'
+import path,{dirname} from 'path'
 // import sessions from 'express-session';
-
+import { fileURLToPath } from 'url';
 const app = express();
 //(async () => {
     //await db.sync()
@@ -22,7 +22,7 @@ const app = express();
 //     secret: "kukuruyuk",
 //     resave: true,
 // }))
-
+const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use('/image', express.static(path.join(__dirname,'image')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
