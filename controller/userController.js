@@ -585,7 +585,7 @@ export const Login = async (req, res) => {
         }
     } catch (err) {
         res.status(404).json({
-            message: "Username atau Password Anda Salah!"
+            status: err
         })
     }
 }
