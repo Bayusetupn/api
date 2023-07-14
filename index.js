@@ -9,8 +9,10 @@ import perkab from './routes/perkab.js';
 import file from './routes/file.js';
 import { isAll } from './middleware/auth.js';
 import path,{dirname} from 'path'
+import Riwayat from './model/history.js';
 // import sessions from 'express-session';
 import { fileURLToPath } from 'url';
+import db from './config/db.js';
 const app = express();
 //(async () => {
     //await db.sync()
