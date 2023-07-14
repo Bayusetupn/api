@@ -13,6 +13,7 @@ import Riwayat from './model/history.js';
 // import sessions from 'express-session';
 import { fileURLToPath } from 'url';
 import db from './config/db.js';
+import riwayat from './routes/history.js';
 const app = express();
 //(async () => {
     //await db.sync()
@@ -44,6 +45,7 @@ app.use(admin)
 app.use(jamaahC)
 app.use(perkab)
 app.use(file)
+app.use(riwayat)
 
 
 app.listen(process.env.PORT, () => {

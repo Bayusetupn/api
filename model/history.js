@@ -30,7 +30,7 @@ const Riwayat = db.define('riwayat',{
     timestamps: false
 })
 
-Jamaah.hasOne(Riwayat)
+Jamaah.hasMany(Riwayat)
 Riwayat.belongsTo(Jamaah)
 
 export default Riwayat

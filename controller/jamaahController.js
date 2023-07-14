@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import User from "../model/user.js";
 import { Sequelize } from "sequelize";
+import Riwayat from "../model/history.js";
 dotenv.config()
 
 export const getAllJamaah = async (req, res) => {
@@ -194,7 +195,6 @@ export const berangkat = async (req, res) => {
                 id: req.body.id
             }
         })
-        console.log(jamaah)
         if (jamaah) {
             await Jamaah.update({
                 berangkat: req.body.berangkat
@@ -202,9 +202,14 @@ export const berangkat = async (req, res) => {
                 where: {
                     id: req.body.id,
                 }
-            }).then(respon => {
-                res.status(200).json({
-                    message: "succes"
+            }).then(async() => {
+                await Riwayat.create({
+                    value: req.body.berangkat,
+                    jamaahId: req.body.id
+                }).then(()=>{
+                    res.status(200).json({
+                        message: "succes"
+                    })
                 })
             })
         } else {
