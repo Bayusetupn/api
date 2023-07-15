@@ -77,6 +77,7 @@ export const createAgen = async (req, res) => {
         })
         if (!user) {
             await User.create({
+                no_ktp: req.body.no_ktp,
                 nama: req.body.nama,
                 alamat: req.body.alamat,
                 no_telepon: req.body.no_telepon,
@@ -132,6 +133,7 @@ export const createUstad = async (req, res) => {
         })
         if (!user) {
             await User.create({
+                no_ktp: req.body.no_ktp,
                 nama: req.body.nama,
                 alamat: req.body.alamat,
                 no_telepon: req.body.no_telepon,
