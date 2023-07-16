@@ -3,6 +3,7 @@ import argon2 from 'argon2';
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import fs from 'fs'
+import LoginHistory from '../model/loginHistory.js';
 dotenv.config()
 const roles = "ustad"
 const role = "agen"
@@ -600,6 +601,9 @@ export const Login = async (req, res) => {
         if (username) {
             var valid = await argon2.verify(username.password, req.body.password)
             if (valid) {
+                await LoginHistory.create({
+                    userId: username.id
+                })
                 const token = jwt.sign({ id: username.id }, process.env.SECRETKEY, { expiresIn: 360000000 })
                 res.status(200).json({
                     token: token,
