@@ -29,25 +29,65 @@ export const getAllJamaah = async (req, res) => {
     }
 }
 
-export const jamaahku = async (req, res) => {
-    const token = await req.cookies._auth
+export const editJamaah = async(req,res) =>{
     try {
-        jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
-            await Jamaah.findAll({
+        await Jamaah.findOne({
+            where:{
+                id: req.body.id
+            }
+        }).then(async()=>{
+            await Jamaah.update({
+                ktp: req.body.ktp,
+                nama: req.body.nama,
+                jenis_kelamin: req.body.jenis_kelamin,
+                alamat: req.body.alamat,
+                no_telepon: req.body.no_telepon
+            },{
                 where: {
-                    userId: decode.id
+                    id: req.body.id
                 }
-            }).then(response => {
-                res.status(200).json({
-                    data: response
+            }).catch(err=>{
+                res.status(409).json({
+                    message : "No Ktp Sudah Terdaftar!"
                 })
-            }).catch(err => {
-                res.status(404).json({
-                    message: err
-                })
+            })
+        }).catch(err=>{
+            res.status(404).json({
+                message : "jamaah Not Found!"
             })
         })
     } catch (err) {
+        res.status(404).json({
+            message : "jamaah Not Found!"
+        })
+    }
+}
+
+export const jamaahku = async (req, res) => {
+    const token = await req.cookies._auth
+    if(token){
+        try {
+            jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
+                await Jamaah.findAll({
+                    where: {
+                        userId: decode.id
+                    }
+                }).then(response => {
+                    res.status(200).json({
+                        data: response
+                    })
+                }).catch(err => {
+                    res.status(404).json({
+                        message: err
+                    })
+                })
+            })
+        } catch (err) {
+            res.status(404).json({
+                message: err
+            })
+        }
+    }else{
         res.status(404).json({
             message: err
         })
@@ -94,16 +134,15 @@ export const getJamaah = async (req, res) => {
 
 export const hapusJamaah = async(req,res)=>{
     const token = req.cookies._auth
-    try {
-        jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
-            await User.findOne({
-                where: {
-                    id: decode.id
-                }
-            }).then(respon=>{
-                respon.decrement('total_jamaah',{by:1})
-            })
-                await Perkab.findOne({
+    if (token) {
+        try {
+            jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
+                await User.findOne({
+                    where: {
+                        id: decode.id
+                    }
+                }).then(async(respon)=>{
+                    await Perkab.findOne({
                     where: {
                         jamaahId: req.body.id
                     }
@@ -112,6 +151,14 @@ export const hapusJamaah = async(req,res)=>{
                         where:{
                             id: responn.id
                         }
+                    }).catch((err)=>{
+                        res.status(404).json({
+                            "error" : err
+                        })
+                    })
+                }).catch((err)=>{
+                    res.status(404).json({
+                        "error" : err
                     })
                 })
                 await File.findOne({
@@ -123,65 +170,96 @@ export const hapusJamaah = async(req,res)=>{
                         where:{
                             id: responnn.id
                         }
+                    }).catch((err)=>{
+                        res.status(404).json({
+                            "error" : err
+                        })
+                    })
+                }).catch((err)=>{
+                    res.status(404).json({
+                        "error" : err
+                    })
+                }).catch((err)=>{
+                    res.status(404).json({
+                        "error" : err
                     })
                 })
                 await Jamaah.destroy({
                     where:{
                         id: req.body.id
                     }
+                }).catch((err)=>{
+                    res.status(404).json({
+                        "error" : err
+                    })
+                }).then(()=>{
+                    respon.decrement('total_jamaah',{by:1})
                 })
+                })
+                    
+                })
+        } catch (err) {
+            res.status(400).json({
+                message : err
             })
-    } catch (err) {
+        }
+    }else{
         res.status(400).json({
-            message : err
+            message : "acces denied!"
         })
     }
 }
 
 export const tambahJamaah = async (req, res) => {
     const token = await req.cookies._auth
-    try {
-        jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
-            await User.findOne({
-                where:{
-                    id: decode.id
-                }
-            }).then(async(user)=>{
-                await Jamaah.create({
-                    userId: decode.id,
-                    daftarkan: user.nama,
-                    nama: req.body.nama,
-                    ktp: req.body.ktp,
-                    jenis_kelamin: req.body.jenis_kelamin,
-                    no_telepon: req.body.no_telepon,
-                    alamat: req.body.alamat,
-                    paket: req.body.paket
-                }).then(async(respon)=>{
-                    await File.create({
-                        jamaahId: respon.id
+    if (token) {
+        try {
+            jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
+                await User.findOne({
+                    where:{
+                        id: decode.id
+                    }
+                }).then(async(user)=>{
+                    await Jamaah.create({
+                        userId: decode.id,
+                        daftarkan: user.nama,
+                        nama: req.body.nama,
+                        ktp: req.body.ktp,
+                        jenis_kelamin: req.body.jenis_kelamin,
+                        no_telepon: req.body.no_telepon,
+                        alamat: req.body.alamat,
+                        paket: req.body.paket
+                    }).then(async(respon)=>{
+                        await File.create({
+                            jamaahId: respon.id
+                        })
+                        await Perkab.create({
+                            jamaahId: respon.id
+                        })
+                        await User.update({
+                            total_jamaah: Sequelize.literal('total_jamaah + 1')
+                        },{
+                            where:{
+                                id: decode.id
+                            }
+                    }).catch(err=>{
+                        res.status(400).json({
+                            message : err
+                        })
                     })
-                    await Perkab.create({
-                        jamaahId: respon.id
-                    })
-                    await User.update({
-                        total_jamaah: Sequelize.literal('total_jamaah + 1')
-                    },{
-                        where:{
-                            id: decode.id
-                        }
+                })
                 }).catch(err=>{
                     res.status(400).json({
-                        message : err
+                        message : "No Ktp Sudah Terdaftar!"
                     })
                 })
             })
-            }).catch(err=>{
-                res.status(400).json({
-                    message : "No Ktp Sudah Terdaftar!"
-                })
+        } catch (err) {
+            res.status(400).json({
+                message : "Server Error"
             })
-        })
-    } catch (err) {
+        }
+    }else{
         res.status(400).json({
             message : "Server Error"
         })

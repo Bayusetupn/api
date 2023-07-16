@@ -14,6 +14,12 @@ import Riwayat from './model/history.js';
 import { fileURLToPath } from 'url';
 import db from './config/db.js';
 import riwayat from './routes/history.js';
+import LoginHistory from './model/loginHistory.js';
+
+// (async()=>{
+//     await LoginHistory.sync()
+// })
+
 const app = express();
 //(async () => {
     //await db.sync()
@@ -31,7 +37,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors({
-    origin: "https://hisar.my.id",
+    origin: "http://localhost:3000",
     credentials: true
 }))
 

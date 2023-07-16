@@ -9,23 +9,29 @@ const role = "agen"
 
 export const me = async (req, res) => {
     const token = await req.cookies._auth
-    try {
-        jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
-            await User.findOne({
-                where: {
-                    id: decode.id
-                }
-            }).then(response => {
-                res.status(200).json({
-                    data: response
-                })
-            }).catch(err => {
-                res.status(404).json({
-                    message: err
+    if (token) {
+        try {
+            jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
+                await User.findOne({
+                    where: {
+                        id: decode.id
+                    }
+                }).then(response => {
+                    res.status(200).json({
+                        data: response
+                    })
+                }).catch(err => {
+                    res.status(404).json({
+                        message: err
+                    })
                 })
             })
-        })
-    } catch (err) {
+        } catch (err) {
+            res.status(404).json({
+                message: err
+            })
+        }
+    }else{
         res.status(404).json({
             message: err
         })
@@ -94,9 +100,8 @@ export const createAgen = async (req, res) => {
             })
         }
     } catch (err) {
-        console.log(err)
-        res.status(409).json({
-            message: err.code
+        return res.status(409).json({
+            message: "No ktp sudah ada !"
         })
     }
 }
@@ -150,93 +155,100 @@ export const createUstad = async (req, res) => {
             })
         }
     } catch (err) {
-        res.status(409).json({
-            message: "Username sudah dipakai !"
+        return res.status(409).json({
+            message: "No ktp sudah ada !"
         })
     }
 }
 
 export const editUstad = async (req, res) => {
     const token = await req.cookies._auth
-    try {
-        jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
-            console.log(token, err)
-            var role = await User.findOne({
-                where: {
-                    id: decode.id
-                }
-            })
-            if (role.role !== "admin" && role.role !== "ustad") {
-                return res.json({
-                    "message": "Anda Tidak memiliki akses!"
-                })
-            }
-            var user = await User.findOne({
-                where: {
-                    username: req.body.username
-                }
-            })
-            if (req.body.password == "") {
-                await User.update({
-                    nama: req.body.nama,
-                    alamat: req.body.alamat,
-                    no_telepon: req.body.no_telepon,
-                    username: req.body.username,
-                }, {
+    if (token) {
+        try {
+            jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
+                console.log(token, err)
+                var role = await User.findOne({
                     where: {
-                        id: req.body.id,
-                        role: "ustad"
+                        id: decode.id
                     }
-                }).then(() => {
-                    return res.status(201).json({
-                        "message": "succes update agen",
-                    })
-                }).catch(() => {
-                    return res.status(409).json({
-                        message: "User telah terdaftar !"
-                    })
                 })
-            } else if (!user || user.username != req.body.username) {
-                await User.update({
-                    nama: req.body.nama,
-                    username: req.body.username,
-                    password: await argon2.hash(req.body.password)
-                }, {
+                if (role.role !== "admin" && role.role !== "ustad") {
+                    return res.json({
+                        "message": "Anda Tidak memiliki akses!"
+                    })
+                }
+                var user = await User.findOne({
                     where: {
-                        id: req.body.id,
-                        role: "ustad"
+                        username: req.body.username
                     }
-                }).then(() => {
+                })
+                if (req.body.password == "") {
+                    await User.update({
+                        no_ktp: req.body.no_ktp,
+                        nama: req.body.nama,
+                        alamat: req.body.alamat,
+                        no_telepon: req.body.no_telepon,
+                        username: req.body.username,
+                    }, {
+                        where: {
+                            id: req.body.id,
+                            role: "ustad"
+                        }
+                    }).then(() => {
+                        return res.status(201).json({
+                            "message": "succes update agen",
+                        })
+                    }).catch(() => {
+                        return res.status(409).json({
+                            message: "Username atau Ktp sudah terdaftar!"
+                        })
+                    })
+                } else if (!user || user.username != req.body.username) {
+                    await User.update({
+                        nama: req.body.nama,
+                        username: req.body.username,
+                        password: await argon2.hash(req.body.password)
+                    }, {
+                        where: {
+                            id: req.body.id,
+                            role: "ustad"
+                        }
+                    }).then(() => {
+                        return res.status(201).json({
+                            "message": "succes update ustad",
+                        })
+                    }).catch(() => {
+                        return res.status(409).json({
+                            message: "User telah terdaftar !"
+                        })
+                    })
+    
+                } else if (req.body.username == user.username) {
+                    await User.update({
+                        nama: req.body.nama,
+                        password: await argon2.hash(req.body.password)
+                    }, {
+                        where: {
+                            id: req.body.id,
+                            role: "ustad"
+                        }
+                    })
                     return res.status(201).json({
                         "message": "succes update ustad",
                     })
-                }).catch(() => {
-                    return res.status(409).json({
-                        message: "User telah terdaftar !"
+                }
+                else {
+                    res.status(409).json({
+                        message: "User telah terdaftar!"
                     })
-                })
-
-            } else if (req.body.username == user.username) {
-                await User.update({
-                    nama: req.body.nama,
-                    password: await argon2.hash(req.body.password)
-                }, {
-                    where: {
-                        id: req.body.id,
-                        role: "ustad"
-                    }
-                })
-                return res.status(201).json({
-                    "message": "succes update ustad",
-                })
-            }
-            else {
-                res.status(409).json({
-                    message: "User telah terdaftar!"
-                })
-            }
-        })
-    } catch (err) {
+                }
+            })
+        } catch (err) {
+            res.status(409).json({
+                message: "Error"
+            })
+        }
+    }else{
         res.status(409).json({
             message: "Error"
         })
@@ -302,86 +314,98 @@ export const setImage = async (req, res) => {
 
 export const editAgen = async (req, res) => {
     const token = await req.cookies._auth
-    try {
-        jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
-            console.log(token, err)
-            var role = await User.findOne({
-                where: {
-                    id: decode.id
+    if (token) {
+        try {
+            jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
+                console.log(token, err)
+                var role = await User.findOne({
+                    where: {
+                        id: decode.id
+                    }
+                })
+                if (role.role !== "admin" && role.role !== 'agen') {
+                    return res.json({
+                        "message": "Anda Tidak memiliki akses!"
+                    })
+                }
+                var user = await User.findOne({
+                    where: {
+                        username: req.body.username
+                    }
+                })
+                if (req.body.password == "") {
+                    await User.update({
+                        no_ktp: req.body.no_ktp,
+                        nama: req.body.nama,
+                        alamat: req.body.alamat,
+                        no_telepon: req.body.no_telepon,
+                        username: req.body.username,
+                    }, {
+                        where: {
+                            id: req.body.id,
+                            role: "agen"
+                        }
+                    }).then(() => {
+                        return res.status(201).json({
+                            "message": "succes update agen",
+                        })
+                    }).catch(() => {
+                        return res.status(401).json({
+                            message: "Username atau Ktp Telah Terdaftar!"
+                        })
+                    })
+                } else if (!user || user.username != req.body.username) {
+                    await User.update({
+                        nama: req.body.nama,
+                        username: req.body.username,
+                        password: await argon2.hash(req.body.password)
+                    }, {
+                        where: {
+                            id: req.body.id,
+                            role: "agen"
+                        }
+                    }).then(() => {
+                        return res.status(201).json({
+                            "message": "succes update agen",
+                        })
+                    }).catch(() => {
+                        return res.status(402).json({
+                            message: "User telah terdaftar !"
+                        })
+                    })
+    
+                } else if (req.body.username == user.username) {
+                    await User.update({
+                        nama: req.body.nama,
+                        password: await argon2.hash(req.body.password)
+                    }, {
+                        where: {
+                            id: req.body.id,
+                            role: "agen"
+                        }
+                    }).then(()=>{
+                        return res.status(201).json({
+                            "message": "succes update agen",
+                        })
+                    }).catch(()=>{
+                        return res.status(201).json({
+                            "message": "Username Telah Terdaftar!",
+                        })
+                    })
+                }
+                else {
+                    res.status(403).json({
+                        message: "User telah terdaftar!"
+                    })
                 }
             })
-            if (role.role !== "admin" && role.role !== 'agen') {
-                return res.json({
-                    "message": "Anda Tidak memiliki akses!"
-                })
-            }
-            var user = await User.findOne({
-                where: {
-                    username: req.body.username
-                }
+        } catch (err) {
+            res.status(404).json({
+                message: "Error"
             })
-            if (req.body.password == "") {
-                await User.update({
-                    nama: req.body.nama,
-                    alamat: req.body.alamat,
-                    no_telepon: req.body.no_telepon,
-                    username: req.body.username,
-                }, {
-                    where: {
-                        id: req.body.id,
-                        role: "agen"
-                    }
-                }).then(() => {
-                    return res.status(201).json({
-                        "message": "succes update agen",
-                    })
-                }).catch(() => {
-                    return res.status(409).json({
-                        message: "User telah terdaftar !"
-                    })
-                })
-            } else if (!user || user.username != req.body.username) {
-                await User.update({
-                    nama: req.body.nama,
-                    username: req.body.username,
-                    password: await argon2.hash(req.body.password)
-                }, {
-                    where: {
-                        id: req.body.id,
-                        role: "agen"
-                    }
-                }).then(() => {
-                    return res.status(201).json({
-                        "message": "succes update agen",
-                    })
-                }).catch(() => {
-                    return res.status(409).json({
-                        message: "User telah terdaftar !"
-                    })
-                })
-
-            } else if (req.body.username == user.username) {
-                await User.update({
-                    nama: req.body.nama,
-                    password: await argon2.hash(req.body.password)
-                }, {
-                    where: {
-                        id: req.body.id,
-                        role: "agen"
-                    }
-                })
-                return res.status(201).json({
-                    "message": "succes update agen",
-                })
-            }
-            else {
-                res.status(409).json({
-                    message: "User telah terdaftar!"
-                })
-            }
-        })
-    } catch (err) {
-        res.status(409).json({
+        }
+    }else{
+        res.status(405).json({
             message: "Error"
         })
     }
@@ -389,83 +413,89 @@ export const editAgen = async (req, res) => {
 
 export const editAdmin = async (req, res) => {
     const token = await req.cookies._auth
-    try {
-        jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
-            console.log(token, err)
-            var role = await User.findOne({
-                where: {
-                    id: decode.id
-                }
-            })
-            if (role.role !== "admin") {
-                return res.json({
-                    "message": "Anda Tidak memiliki akses!"
-                })
-            }
-            var user = await User.findOne({
-                where: {
-                    username: req.body.username
-                }
-            })
-            if (req.body.password == "") {
-                await User.update({
-                    nama: req.body.nama,
-                    username: req.body.username,
-                }, {
+    if (token) {
+        try {
+            jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
+                console.log(token, err)
+                var role = await User.findOne({
                     where: {
-                        id: decode.id,
-                        role: "admin"
+                        id: decode.id
                     }
-                }).then(() => {
+                })
+                if (role.role !== "admin") {
+                    return res.json({
+                        "message": "Anda Tidak memiliki akses!"
+                    })
+                }
+                var user = await User.findOne({
+                    where: {
+                        username: req.body.username
+                    }
+                })
+                if (req.body.password == "") {
+                    await User.update({
+                        nama: req.body.nama,
+                        username: req.body.username,
+                    }, {
+                        where: {
+                            id: decode.id,
+                            role: "admin"
+                        }
+                    }).then(() => {
+                        return res.status(201).json({
+                            "message": "succes update admin",
+                        })
+                    }).catch(() => {
+                        return res.status(409).json({
+                            message: "User telah terdaftar !"
+                        })
+                    })
+                } else if (!user || user.username != decode.id) {
+                    await User.update({
+                        nama: req.body.nama,
+                        username: req.body.username,
+                        password: await argon2.hash(req.body.password)
+                    }, {
+                        where: {
+                            id: decode.id,
+                            role: "admin"
+                        }
+                    }).then(() => {
+                        return res.status(201).json({
+                            "message": "succes update admin",
+                        })
+                    }).catch(() => {
+                        return res.status(409).json({
+                            message: "User telah terdaftar !"
+                        })
+                    })
+    
+                } else if (decode.id == user.username) {
+                    await User.update({
+                        nama: req.body.nama,
+                        password: await argon2.hash(req.body.password)
+                    }, {
+                        where: {
+                            id: decode.id,
+                            role: "admin"
+                        }
+                    })
                     return res.status(201).json({
                         "message": "succes update admin",
                     })
-                }).catch(() => {
-                    return res.status(409).json({
-                        message: "User telah terdaftar !"
+                }
+                else {
+                    res.status(409).json({
+                        message: "User telah terdaftar!"
                     })
-                })
-            } else if (!user || user.username != decode.id) {
-                await User.update({
-                    nama: req.body.nama,
-                    username: req.body.username,
-                    password: await argon2.hash(req.body.password)
-                }, {
-                    where: {
-                        id: decode.id,
-                        role: "admin"
-                    }
-                }).then(() => {
-                    return res.status(201).json({
-                        "message": "succes update admin",
-                    })
-                }).catch(() => {
-                    return res.status(409).json({
-                        message: "User telah terdaftar !"
-                    })
-                })
-
-            } else if (decode.id == user.username) {
-                await User.update({
-                    nama: req.body.nama,
-                    password: await argon2.hash(req.body.password)
-                }, {
-                    where: {
-                        id: decode.id,
-                        role: "admin"
-                    }
-                })
-                return res.status(201).json({
-                    "message": "succes update admin",
-                })
-            }
-            else {
-                res.status(409).json({
-                    message: "User telah terdaftar!"
-                })
-            }
-        })
-    } catch (err) {
+                }
+            })
+        } catch (err) {
+            return res.status(409).json({
+                message: err.code
+            })
+        }
+    }else{
         return res.status(409).json({
             message: err.code
         })

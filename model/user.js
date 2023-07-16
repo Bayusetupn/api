@@ -18,6 +18,7 @@ const User = db.define('user',{
     no_ktp:{
         type: DataTypes.STRING,
         allowNull: true,
+        unique: true
     },
     nama:{
         type: DataTypes.STRING,
