@@ -604,7 +604,7 @@ export const Login = async (req, res) => {
                 await LoginHistory.create({
                     userId: username.id
                 })
-                const token = jwt.sign({ id: username.id }, process.env.SECRETKEY, { expiresIn: 360000000 })
+                const token = jwt.sign({ id: username.id }, process.env.SECRETKEY, { expiresIn: 30 * 60 })
                 res.status(200).json({
                     token: token,
                     role: username.role
