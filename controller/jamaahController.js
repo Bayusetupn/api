@@ -4,7 +4,7 @@ import Perkab from '../model/perlengkapan.js'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import User from "../model/user.js";
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import Riwayat from "../model/history.js";
 dotenv.config()
 
@@ -161,6 +161,25 @@ export const hapusJamaah = async(req,res)=>{
                         "error" : err
                     })
                 })
+                await Riwayat.findAll({
+                    where: {
+                        jamaahId: req.body.id
+                    }
+                }).then(async(responn)=>{
+                    await Riwayat.destroy({
+                        where:{
+                            jamaahId: req.body.id
+                        }
+                    }).catch(err=>{
+                        res.status(404).json({
+                            error: err
+                        })
+                    })
+                }).catch(err=>{
+                    res.status(404).json({
+                        error: err
+                    })
+                })
                 await File.findOne({
                     where:{
                         jamaahId: req.body.id
@@ -174,10 +193,6 @@ export const hapusJamaah = async(req,res)=>{
                         res.status(404).json({
                             "error" : err
                         })
-                    })
-                }).catch((err)=>{
-                    res.status(404).json({
-                        "error" : err
                     })
                 }).catch((err)=>{
                     res.status(404).json({

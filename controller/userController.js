@@ -530,6 +530,21 @@ export const getAgenById = async (req, res) => {
 
 export const deleteUstad = async (req, res) => {
     try {
+        await LoginHistory.findAll({
+            where: {
+                userId: req.body.id
+            }
+        }).then(async()=>{
+            await LoginHistory.destroy({
+                where: {
+                    userId : req.body.id
+                }
+            })
+        }).catch((err)=>{
+            res.json({
+                err
+            })
+        })
         await User.destroy({
             where: {
                 id: req.body.id,
@@ -549,6 +564,21 @@ export const deleteUstad = async (req, res) => {
 
 export const deleteAgen = async (req, res) => {
     try {
+        await LoginHistory.findAll({
+            where: {
+                userId: req.body.id
+            }
+        }).then(async()=>{
+            await LoginHistory.destroy({
+                where: {
+                    userId : req.body.id
+                }
+            })
+        }).catch((err)=>{
+            res.json({
+                err
+            })
+        })
         await User.destroy({
             where: {
                 id: req.body.id,
