@@ -173,7 +173,7 @@ export const editUstad = async (req, res) => {
                         id: decode.id
                     }
                 })
-                if (role.role !== "admin" && role.role !== "ustad") {
+                if (role.role !== "admin" && role.role !== "ustad" && role.role !== "manager") {
                     return res.json({
                         "message": "Anda Tidak memiliki akses!"
                     })
@@ -324,7 +324,7 @@ export const editAgen = async (req, res) => {
                         id: decode.id
                     }
                 })
-                if (role.role !== "admin" && role.role !== 'agen') {
+                if (role.role !== "admin" && role.role !== 'agen' && role.role !== "manager") {
                     return res.json({
                         "message": "Anda Tidak memiliki akses!"
                     })
@@ -423,7 +423,7 @@ export const editAdmin = async (req, res) => {
                         id: decode.id
                     }
                 })
-                if (role.role !== "admin") {
+                if (role.role !== "admin" ) {
                     return res.json({
                         "message": "Anda Tidak memiliki akses!"
                     })
@@ -483,6 +483,97 @@ export const editAdmin = async (req, res) => {
                     })
                     return res.status(201).json({
                         "message": "succes update admin",
+                    })
+                }
+                else {
+                    res.status(409).json({
+                        message: "User telah terdaftar!"
+                    })
+                }
+            })
+        } catch (err) {
+            return res.status(409).json({
+                message: err.code
+            })
+        }
+    }else{
+        return res.status(409).json({
+            message: err.code
+        })
+    }
+}
+
+export const editManager = async (req, res) => {
+    const token = await req.cookies._auth
+    if (token) {
+        try {
+            jwt.verify(token, process.env.SECRETKEY, async (err, decode) => {
+                console.log(token, err)
+                var role = await User.findOne({
+                    where: {
+                        id: decode.id
+                    }
+                })
+                if (role.role !== "manager" ) {
+                    return res.json({
+                        "message": "Anda Tidak memiliki akses!"
+                    })
+                }
+                var user = await User.findOne({
+                    where: {
+                        username: req.body.username
+                    }
+                })
+                if (req.body.password == "") {
+                    await User.update({
+                        nama: req.body.nama,
+                        username: req.body.username,
+                    }, {
+                        where: {
+                            id: decode.id,
+                            role: "manager"
+                        }
+                    }).then(() => {
+                        return res.status(201).json({
+                            "message": "succes update admin",
+                        })
+                    }).catch(() => {
+                        return res.status(409).json({
+                            message: "User telah terdaftar !"
+                        })
+                    })
+                } else if (!user || user.username != decode.id) {
+                    await User.update({
+                        nama: req.body.nama,
+                        username: req.body.username,
+                        password: await argon2.hash(req.body.password)
+                    }, {
+                        where: {
+                            id: decode.id,
+                            role: "manager"
+                        }
+                    }).then(() => {
+                        return res.status(201).json({
+                            "message": "succes update manager",
+                        })
+                    }).catch(() => {
+                        return res.status(409).json({
+                            message: "User telah terdaftar !"
+                        })
+                    })
+    
+                } else if (decode.id == user.username) {
+                    await User.update({
+                        nama: req.body.nama,
+                        password: await argon2.hash(req.body.password)
+                    }, {
+                        where: {
+                            id: decode.id,
+                            role: "manager"
+                        }
+                    })
+                    return res.status(201).json({
+                        "message": "succes update manager",
                     })
                 }
                 else {

@@ -47,7 +47,7 @@ export const isAgen = async (req,res,next)=>{
                 var role = await User.findOne({where :{
                     id: decode.id
                 }})
-                if (role.role !== "agen" && role.role !== "admin") {
+                if (role.role !== "agen" && role.role !== "admin" && role.role !== "manager") {
                     return res.json({
                         "message" : "Anda Tidak memiliki akses!"
                     })
@@ -74,7 +74,7 @@ export const isAdmin = async (req,res,next)=>{
                     var role = await User.findOne({where :{
                         id: decode.id
                     }})
-                    if (role.role !== "admin") {
+                    if (role.role !== "admin" && role.role !== "manager") {
                         return res.json({
                             "message" : "Anda Tidak memiliki akses!"
                         })
@@ -102,14 +102,15 @@ export const AdminProf = async (req,res,next)=>{
                     var role = await User.findOne({where :{
                         id: decode.id
                     }})
-                    if (role.role !== "admin") {
+                    if (role.role !== "admin" && role.role !== "manager") {
                         return res.json({
                             "message" : "Anda Tidak memiliki akses!"
                         })
                     }else{
                         res.status(200).json({
                             "nama" : role.nama,
-                            "username" : role.username
+                            "username" : role.username,
+                            "role" : role.role
                         })
                     }
                     next()
@@ -134,7 +135,7 @@ export const isUstad = async (req,res,next)=>{
                     var role = await User.findOne({where :{
                         id: decode.id
                     }})
-                    if (role.role !== "ustad" && role.role !== "admin") {
+                    if (role.role !== "ustad" && role.role !== "admin" && role.role !== "manager") {
                         return res.json({
                             "message" : "Anda Tidak memiliki akses!"
                         })

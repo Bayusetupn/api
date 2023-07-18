@@ -1,6 +1,6 @@
 import express from 'express'
 import { AdminProf, isAdmin, isAgen, isAll, isUstad } from '../middleware/auth.js';
-import {Login, createAgen, createUstad, deleteAgen, deleteUstad, editAdmin, editAgen, editUstad, fotoAgen, getAgenById, getAllAgen, getAllUstad, getUstadById, me, setImage} from '../controller/userController.js'
+import {Login, createAgen, createUstad, deleteAgen, deleteUstad, editAdmin, editAgen, editManager, editUstad, fotoAgen, getAgenById, getAllAgen, getAllUstad, getUstadById, me, setImage} from '../controller/userController.js'
 import multer from 'multer';
 import { uuid } from 'uuidv4';
 
@@ -26,6 +26,7 @@ router.post('/login',Login)
 router.get('/user', isAll)
 router.get('/admin',isAdmin,AdminProf)
 router.put('/admin/edit',editAdmin)
+router.put('/manager/edit',editManager)
 router.post('/profilePic', upload.single('image'),setImage )
 //agen
 router.get('/agen/me', isAgen,me)

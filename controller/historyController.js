@@ -22,6 +22,8 @@ export const getAllRiwayat = async(req,res) =>{
 export const getAllLoginHistory = async(req,res)=>{
     try {
         await LoginHistory.findAll({
+            limit: 5,
+            order: [["login","DESC"]],
             where:{
                 userId: req.body.id
             },attributes:{
