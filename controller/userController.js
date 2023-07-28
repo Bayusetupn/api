@@ -645,10 +645,16 @@ export const deleteUstad = async (req, res) => {
                 userId : req.body.id
             }
         }).then(async()=>{
-            await User.destroy({
+            await Jamaah.destroy({
                 where : {
-                    id: req.body.id
+                    userId : req.body.id
                 }
+            }).then(async()=>{
+                await User.destroy({
+                    where : {
+                        id: req.body.id
+                    }
+                })
             })
         }).catch(async()=>{
             await User.destroy({
@@ -686,10 +692,16 @@ export const deleteAgen = async (req, res) => {
                 userId : req.body.id
             }
         }).then(async()=>{
-            await User.destroy({
+            await Jamaah.destroy({
                 where : {
-                    id: req.body.id
+                    userId : req.body.id
                 }
+            }).then(async()=>{
+                await User.destroy({
+                    where : {
+                        id: req.body.id
+                    }
+                })
             })
         }).catch(async()=>{
             await User.destroy({
