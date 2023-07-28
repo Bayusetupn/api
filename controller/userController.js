@@ -640,79 +640,23 @@ export const deleteUstad = async (req, res) => {
                 err
             })
         })
-          await Perkab.findOne({
-                where: {
-                    jamaahId: req.body.id
-                }
-            }).then(async(responn)=>{
-                await Perkab.destroy({
-                    where:{
-                        id: responn.id
-                    }
-                }).catch((err)=>{
-                    res.status(404).json({
-                        "error" : err
-                    })
-                })
-            }).catch((err)=>{
-                res.status(404).json({
-                    "error" : err
-                })
-            })
-            await Riwayat.findAll({
-                where: {
-                    jamaahId: req.body.id
-                }
-            }).then(async(responn)=>{
-                await Riwayat.destroy({
-                    where:{
-                        jamaahId: req.body.id
-                    }
-                }).catch(err=>{
-                    res.status(404).json({
-                        error: err
-                    })
-                })
-            }).catch(err=>{
-                res.status(404).json({
-                    error: err
-                })
-            })
-            await File.findOne({
-                where:{
-                    jamaahId: req.body.id
-                }
-            }).then(async(responnn)=>{
-                await File.destroy({
-                    where:{
-                        id: responnn.id
-                    }
-                }).catch((err)=>{
-                    res.status(404).json({
-                        "error" : err
-                    })
-                })
-            }).catch((err)=>{
-                res.status(404).json({
-                    "error" : err
-                })
-            })
-            await Jamaah.destroy({
-                where:{
+        await Jamaah.findAll({
+            where : {
+                userId : req.body.id
+            }
+        }).then(async()=>{
+            await User.destroy({
+                where : {
                     id: req.body.id
                 }
-            }).catch((err)=>{
-                res.status(404).json({
-                    "error" : err
-                })
-            }).then(async()=>{
-                await User.destroy({
-                    where: {
-                        id: req.body.id,
-                        role: "ustad"
-                    }
-                })
             })
+        }).catch(async()=>{
+            await User.destroy({
+                where : {
+                    id: req.body.id
+                }
+            })
+        })
     } catch (err) {
         res.json({
             err
@@ -737,79 +681,23 @@ export const deleteAgen = async (req, res) => {
                 err
             })
         })
-          await Perkab.findOne({
-                where: {
-                    jamaahId: req.body.id
-                }
-            }).then(async(responn)=>{
-                await Perkab.destroy({
-                    where:{
-                        id: responn.id
-                    }
-                }).catch((err)=>{
-                    res.status(404).json({
-                        "error" : err
-                    })
-                })
-            }).catch((err)=>{
-                res.status(404).json({
-                    "error" : err
-                })
-            })
-            await Riwayat.findAll({
-                where: {
-                    jamaahId: req.body.id
-                }
-            }).then(async(responn)=>{
-                await Riwayat.destroy({
-                    where:{
-                        jamaahId: req.body.id
-                    }
-                }).catch(err=>{
-                    res.status(404).json({
-                        error: err
-                    })
-                })
-            }).catch(err=>{
-                res.status(404).json({
-                    error: err
-                })
-            })
-            await File.findOne({
-                where:{
-                    jamaahId: req.body.id
-                }
-            }).then(async(responnn)=>{
-                await File.destroy({
-                    where:{
-                        id: responnn.id
-                    }
-                }).catch((err)=>{
-                    res.status(404).json({
-                        "error" : err
-                    })
-                })
-            }).catch((err)=>{
-                res.status(404).json({
-                    "error" : err
-                })
-            })
-            await Jamaah.destroy({
-                where:{
+        await Jamaah.findAll({
+            where : {
+                userId : req.body.id
+            }
+        }).then(async()=>{
+            await User.destroy({
+                where : {
                     id: req.body.id
                 }
-            }).catch((err)=>{
-                res.status(404).json({
-                    "error" : err
-                })
-            }).then(async()=>{
-                await User.destroy({
-                    where: {
-                        id: req.body.id,
-                        role: "agen"
-                    }
-                })
             })
+        }).catch(async()=>{
+            await User.destroy({
+                where : {
+                    id: req.body.id
+                }
+            })
+        })
     } catch (err) {
         res.json({
             err
