@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import fs from 'fs'
 import LoginHistory from '../model/loginHistory.js';
-import Jamaah from '../routes/jamaah.js';
+import Jamaah from '../model/Jamaah.js';
 dotenv.config()
 const roles = "ustad"
 const role = "agen"
