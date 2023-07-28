@@ -1,1 +1,0 @@
-export const url = "https://hisar-api.onrender.com/"
