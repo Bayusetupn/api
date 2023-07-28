@@ -1,9 +1,13 @@
 import User from '../model/user.js';
+import Riwayat from '../model/history.js';
+import File from '../model/file.js';
+import Perkab from '../model/perlengkapan.js';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import fs from 'fs'
 import LoginHistory from '../model/loginHistory.js';
+import Jamaah from '../routes/jamaah.js';
 dotenv.config()
 const roles = "ustad"
 const role = "agen"
