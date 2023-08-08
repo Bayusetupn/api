@@ -279,6 +279,10 @@ export const setImage = async (req, res) => {
                 res.status(200).json({
                     message: respon + req.file.path
                 })
+            }).catch(err=>{
+                res.status(404).json({
+                    message : "error " + err
+                })
             })
             /*if (data) {
                 await User.update({
@@ -308,11 +312,15 @@ export const setImage = async (req, res) => {
                 res.status(200).json({
                     message: respon + req.file.path
                 })
+            }).catch(err=>{
+                res.status(404).json({
+                    message : "error " + err
+                })
             })
         }
     } catch (err) {
         res.status(404).json({
-            message: err
+            message: "erros " + err
         })
     }
 }
