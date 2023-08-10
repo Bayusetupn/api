@@ -15,15 +15,11 @@ import { fileURLToPath } from 'url';
 import db from './config/db.js';
 import riwayat from './routes/history.js';
 import LoginHistory from './model/loginHistory.js';
-
-// (async()=>{
-//     await LoginHistory.sync()
-// })
-
+import Promo from './model/promo.js';
 const app = express();
-//(async () => {
-    //await db.sync()
-//})()
+//  (async () => {
+//      await db.sync()
+// })()
 
 // app.use(sessions({
 //     saveUninitialized: true,

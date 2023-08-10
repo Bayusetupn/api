@@ -3,6 +3,7 @@ import { AdminProf, isAdmin, isAgen, isAll, isUstad } from '../middleware/auth.j
 import {Login, createAgen, createUstad, deleteAgen, deleteUstad, editAdmin, editAgen, editManager, editUstad, fotoAgen, getAgenById, getAllAgen, getAllUstad, getUstadById, me, setImage} from '../controller/userController.js'
 import multer from 'multer';
 import { uuid } from 'uuidv4';
+import { addPromo, deletePromo, getAllPromo } from '../controller/promoController.js';
 
 const DIR = './image'
 
@@ -28,6 +29,10 @@ router.get('/admin',isAdmin,AdminProf)
 router.put('/admin/edit',editAdmin)
 router.put('/manager/edit',editManager)
 router.post('/profilePic', upload.single('image'),setImage )
+//promo
+router.post('/upload/promo',isAdmin, upload.single('promo'),addPromo)
+router.post('/delete/promo',isAdmin,deletePromo)
+router.get('/promo',isAll,getAllPromo)
 //agen
 router.get('/agen/me', isAgen,me)
 router.get('/agen',isAgen,getAllAgen);
