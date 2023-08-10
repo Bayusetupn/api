@@ -30,9 +30,9 @@ router.put('/admin/edit',editAdmin)
 router.put('/manager/edit',editManager)
 router.post('/profilePic', upload.single('image'),setImage )
 //promo
-router.post('/upload/promo',isAdmin, upload.single('promo'),addPromo)
-router.post('/delete/promo',isAdmin,deletePromo)
-router.get('/promo',isAll,getAllPromo)
+router.post('/upload/promo', upload.single('promo'),addPromo)
+router.post('/delete/promo',deletePromo)
+router.get('/promo',getAllPromo)
 //agen
 router.get('/agen/me', isAgen,me)
 router.get('/agen',isAgen,getAllAgen);
